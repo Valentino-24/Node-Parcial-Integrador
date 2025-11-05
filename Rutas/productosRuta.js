@@ -2,6 +2,7 @@
 import express from "express";
 import Producto from "../Modelos/Producto.js";
 import Resena from "../Modelos/Resena.js";
+import { top } from "../Controllers/productosController.js";
 
 const productosRuta = express.Router();
 
@@ -38,15 +39,7 @@ productosRuta.get("/filtro", async (req, res) => {
 // GET /api/productos/top -> productos más reseñados (por cantidad de reseñas)
 productosRuta.get("/top", async (req, res) => {
   try {
-    const agg = await Resena.aggregate([
-      { $group: { _id: "$producto_id", reseñasCount: { $sum: 1 } } },
-      { $sort: { reseñasCount: -1 } },
-      { $limit: 10 },
-      { $lookup: { from: "productos", localField: "_id", foreignField: "_id", as: "producto" } },
-      { $unwind: "$producto" },
-      { $project: { _id: "$producto._id", nombre: "$producto.nombre", reseñasCount: 1, precio: "$producto.precio", categoria_id: "$producto.categoria_id" } }
-    ]);
-    res.json(agg);
+    return res.status(200).json(await top());
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
