@@ -21,19 +21,6 @@ export const crear = async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
-export const listar = async (req, res) => {
-  try {
-    const resenas = await Resena.find().populate("usuario_id", "nombre email").populate("producto_id", "nombre precio");
-    res.json(resenas);
-  } catch (err) { res.status(500).json({ error: err.message }); }
-};
-
-export const porProducto = async (req, res) => {
-  try {
-    const r = await Resena.find({ producto_id: req.params.productId }).populate("usuario_id", "nombre");
-    res.json(r);
-  } catch (err) { res.status(500).json({ error: err.message }); }
-};
 
 export const top = async (req, res) => {
   try {
@@ -46,27 +33,5 @@ export const top = async (req, res) => {
       { $limit: 20 }
     ]);
     res.json(agg);
-  } catch (err) { res.status(500).json({ error: err.message }); }
-};
-
-export const detalle = async (req, res) => {
-  try {
-    const r = await Resena.findById(req.params.id).populate("usuario_id", "nombre").populate("producto_id", "nombre");
-    if (!r) return res.status(404).json({ error: "Reseña no encontrada" });
-    res.json(r);
-  } catch (err) { res.status(500).json({ error: err.message }); }
-};
-
-export const actualizar = async (req, res) => {
-  try {
-    const r = await Resena.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json(r);
-  } catch (err) { res.status(500).json({ error: err.message }); }
-};
-
-export const eliminar = async (req, res) => {
-  try {
-    await Resena.findByIdAndDelete(req.params.id);
-    res.json({ message: "Reseña eliminada" });
   } catch (err) { res.status(500).json({ error: err.message }); }
 };

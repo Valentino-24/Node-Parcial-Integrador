@@ -2,27 +2,6 @@
 import Carrito from "../Modelos/Carrito.js";
 import Producto from "../Modelos/Producto.js";
 
-export const upsertCarrito = async (req, res) => {
-  try {
-    const { usuario_id, items = [] } = req.body;
-    if (!usuario_id) return res.status(400).json({ error: "usuario_id requerido" });
-    const carrito = await Carrito.findOneAndUpdate(
-      { usuario_id },
-      { $set: { items } },
-      { upsert: true, new: true }
-    );
-    res.status(201).json(carrito);
-  } catch (err) { res.status(500).json({ error: err.message }); }
-};
-
-export const mostrarPorUsuario = async (req, res) => {
-  try {
-    const carrito = await Carrito.findOne({ usuario_id: req.params.usuarioId }).populate("items.producto_id");
-    if (!carrito) return res.status(404).json({ error: "Carrito no encontrado" });
-    res.json(carrito);
-  } catch (err) { res.status(500).json({ error: err.message }); }
-};
-
 export const agregarActualizarItem = async (req, res) => {
   try {
     const { producto_id, cantidad = 1 } = req.body;

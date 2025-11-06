@@ -2,11 +2,12 @@
 import express from "express";
 import Carrito from "../Modelos/Carrito.js";
 import Producto from "../Modelos/Producto.js";
+import { agregarActualizarItem, eliminarCarrito, eliminarItem, total } from "../Controllers/carritoController.js";
 
-const router = express.Router();
+const carritoRuta = express.Router();
 
 // CREATE/UPsert carrito (opcional)
-router.post("/", async (req, res) => {
+carritoRuta.post("/", async (req, res) => {
   try {
     const { usuario_id, items = [] } = req.body;
     if (!usuario_id) return res.status(400).json({ error: "usuario_id requerido" });
@@ -20,7 +21,7 @@ router.post("/", async (req, res) => {
 });
 
 // GET /api/carrito/:usuarioId -> mostrar carrito con productos
-router.get("/:usuarioId", async (req, res) => {
+carritoRuta.get("/:usuarioId", async (req, res) => {
   try {
     const carrito = await Carrito.findOne({ usuario_id: req.params.usuarioId }).populate("items.producto_id");
     if (!carrito) return res.status(404).json({ error: "Carrito no encontrado" });
@@ -29,60 +30,33 @@ router.get("/:usuarioId", async (req, res) => {
 });
 
 // PUT agregar/actualizar item en carrito
-router.put("/:usuarioId/item", async (req, res) => {
+carritoRuta.put("/:usuarioId/item", async (req, res) => {
   try {
-    const { producto_id, cantidad = 1 } = req.body;
-    if (!producto_id) return res.status(400).json({ error: "producto_id requerido" });
-    let carrito = await Carrito.findOne({ usuario_id: req.params.usuarioId });
-    if (!carrito) carrito = await Carrito.create({ usuario_id: req.params.usuarioId, items: [] });
-
-    const idx = carrito.items.findIndex(i => i.producto_id.toString() === producto_id.toString());
-    if (idx >= 0) carrito.items[idx].cantidad = Number(cantidad);
-    else carrito.items.push({ producto_id, cantidad: Number(cantidad) });
-
-    await carrito.save();
-    const populated = await carrito.populate("items.producto_id");
-    res.json(populated);
+    return res.status(200).json(await agregarActualizarItem());
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // DELETE item del carrito
-router.delete("/:usuarioId/item/:productoId", async (req, res) => {
+carritoRuta.delete("/:usuarioId/item/:productoId", async (req, res) => {
   try {
-    const carrito = await Carrito.findOneAndUpdate(
-      { usuario_id: req.params.usuarioId },
-      { $pull: { items: { producto_id: req.params.productoId } } },
-      { new: true }
-    ).populate("items.producto_id");
-    res.json(carrito || { message: "Carrito actualizado" });
+    return res.status(200).json(await eliminarItem());
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // DELETE /api/carrito/:usuarioId -> borrar todo el carrito
-router.delete("/:usuarioId", async (req, res) => {
+carritoRuta.delete("/:usuarioId", async (req, res) => {
   try {
-    await Carrito.findOneAndDelete({ usuario_id: req.params.usuarioId });
-    res.json({ message: "Carrito eliminado" });
+    return res.status(200).json(await eliminarCarrito());
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // GET /api/carrito/:usuarioId/total -> calcular total y subtotal del carrito
-router.get("/:usuarioId/total", async (req, res) => {
+carritoRuta.get("/:usuarioId/total", async (req, res) => {
   try {
     const carrito = await Carrito.findOne({ usuario_id: req.params.usuarioId }).populate("items.producto_id");
     if (!carrito) return res.status(404).json({ error: "Carrito no encontrado" });
-
-    let total = 0;
-    const items = carrito.items.map(i => {
-      const prod = i.producto_id;
-      const precio = prod ? prod.precio : 0;
-      const subtotal = precio * i.cantidad;
-      total += subtotal;
-      return { producto: prod ? { id: prod._id, nombre: prod.nombre, precio } : null, cantidad: i.cantidad, subtotal };
-    });
-
-    res.json({ items, total });
+    return res.status(200).json(await total());
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-export default router;
+export default carritoRuta;

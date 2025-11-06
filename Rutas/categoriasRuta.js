@@ -2,11 +2,12 @@
 import express from "express";
 import Categoria from "../Modelos/Categoria.js";
 import Producto from "../Modelos/Producto.js";
+import { stats } from "../Controllers/categoriasController.js";
 
-const router = express.Router();
+const categoriasRutas = express.Router();
 
 // CREATE categoria
-router.post("/", async (req, res) => {
+categoriasRutas.post("/", async (req, res) => {
   try {
     const c = await Categoria.create(req.body);
     res.status(201).json(c);
@@ -14,7 +15,7 @@ router.post("/", async (req, res) => {
 });
 
 // READ todas las categorias
-router.get("/", async (req, res) => {
+categoriasRutas.get("/", async (req, res) => {
   try {
     const cats = await Categoria.find();
     res.json(cats);
@@ -22,19 +23,14 @@ router.get("/", async (req, res) => {
 });
 
 // GET /api/categorias/stats -> cantidad de productos por categoría
-router.get("/stats", async (req, res) => {
+categoriasRutas.get("/stats", async (req, res) => {
   try {
-    const agg = await Categoria.aggregate([
-      { $lookup: { from: "productos", localField: "_id", foreignField: "categoria_id", as: "productos" } },
-      { $project: { nombre: 1, cantidadProductos: { $size: "$productos" } } },
-      { $sort: { cantidadProductos: -1 } }
-    ]);
-    res.json(agg);
+    return res.status(200).json(await stats());
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // GET categoria por id
-router.get("/:id", async (req, res) => {
+categoriasRutas.get("/:id", async (req, res) => {
   try {
     const c = await Categoria.findById(req.params.id);
     if (!c) return res.status(404).json({ error: "Categoría no encontrada" });
@@ -43,7 +39,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // PUT actualizar
-router.put("/:id", async (req, res) => {
+categoriasRutas.put("/:id", async (req, res) => {
   try {
     const c = await Categoria.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(c);
@@ -51,7 +47,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE categoria
-router.delete("/:id", async (req, res) => {
+categoriasRutas.delete("/:id", async (req, res) => {
   try {
     // opcional: desasignar categoria en productos
     await Producto.updateMany({ categoria_id: req.params.id }, { $unset: { categoria_id: "" } });
@@ -60,4 +56,4 @@ router.delete("/:id", async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-export default router;
+export default categoriasRutas;
