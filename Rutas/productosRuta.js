@@ -3,11 +3,16 @@ import express from "express";
 import Producto from "../Modelos/Producto.js";
 import Resena from "../Modelos/Resena.js";
 import { top } from "../Controllers/productosController.js";
+import { verificarToken } from "../middleware/verificarToken.js";
+import { soloAdmin } from "../middleware/verificarRol.js";
+
 
 const productosRuta = express.Router();
 
+productosRuta.use(verificarToken);
+
 // CREATE producto
-productosRuta.post("/", async (req, res) => {
+productosRuta.post("/", soloAdmin, async (req, res) => {
   try {
     const p = await Producto.create(req.body);
     res.status(201).json(p);
@@ -44,7 +49,7 @@ productosRuta.get("/top", async (req, res) => {
 });
 
 // PATCH /api/productos/:id/stock -> actualizar stock
-productosRuta.patch("/:id/stock", async (req, res) => {
+productosRuta.patch("/:id/stock",soloAdmin, async (req, res) => {
   try {
     const { stock } = req.body;
     if (stock == null) return res.status(400).json({ error: "Enviar campo stock" });
@@ -55,7 +60,7 @@ productosRuta.patch("/:id/stock", async (req, res) => {
 });
 
 // UPDATE producto completo
-productosRuta.put("/:id", async (req, res) => {
+productosRuta.put("/:id",soloAdmin, async (req, res) => {
   try {
     const p = await Producto.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!p) return res.status(404).json({ error: "Producto no encontrado" });
@@ -64,7 +69,7 @@ productosRuta.put("/:id", async (req, res) => {
 });
 
 // DELETE producto
-productosRuta.delete("/:id", async (req, res) => {
+productosRuta.delete("/:id",soloAdmin, async (req, res) => {
   try {
     await Producto.findByIdAndDelete(req.params.id);
     res.json({ message: "Producto eliminado" });

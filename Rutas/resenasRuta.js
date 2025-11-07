@@ -2,8 +2,10 @@
 import express from "express";
 import Resena from "../Modelos/Resena.js";
 import { crear, top } from "../Controllers/resenasController.js";
+import { verificarToken } from "../middleware/verificarToken.js";
 
 const resenasRutas = express.Router();
+resenasRutas.use(verificarToken);
 
 // CREATE reseña -> solo si el usuario compró el producto
 resenasRutas.post("/", async (req, res) => {

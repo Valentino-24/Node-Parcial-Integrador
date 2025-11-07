@@ -2,8 +2,11 @@
 import express from "express";
 import Pedido from "../Modelos/Pedido.js";
 import { stats } from "../Controllers/pedidosController.js";
+import { verificarToken } from "../middleware/verificarToken.js";
+import { soloAdmin } from "../middleware/verificarRol.js";
 
 const pedidosRutas = express.Router();
+pedidosRutas.use(verificarToken);
 
 // CREATE pedido
 pedidosRutas.post("/", async (req, res) => {
@@ -58,7 +61,7 @@ pedidosRutas.get("/:id", async (req, res) => {
 });
 
 // DELETE pedido
-pedidosRutas.delete("/:id", async (req, res) => {
+pedidosRutas.delete("/:id", soloAdmin, async (req, res) => {
   try {
     await Pedido.findByIdAndDelete(req.params.id);
     res.json({ message: "Pedido eliminado" });

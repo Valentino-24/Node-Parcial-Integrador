@@ -3,11 +3,15 @@ import express from "express";
 import Categoria from "../Modelos/Categoria.js";
 import Producto from "../Modelos/Producto.js";
 import { stats } from "../Controllers/categoriasController.js";
+import { verificarToken } from "../middleware/verificarToken.js";
+import { soloAdmin } from "../middleware/verificarRol.js";
 
 const categoriasRutas = express.Router();
 
+categoriasRutas.use(verificarToken);
+
 // CREATE categoria
-categoriasRutas.post("/", async (req, res) => {
+categoriasRutas.post("/", soloAdmin, async (req, res) => {
   try {
     const c = await Categoria.create(req.body);
     res.status(201).json(c);
@@ -23,7 +27,7 @@ categoriasRutas.get("/", async (req, res) => {
 });
 
 // GET /api/categorias/stats -> cantidad de productos por categoría
-categoriasRutas.get("/stats", async (req, res) => {
+categoriasRutas.get("/stats",soloAdmin, async (req, res) => {
   try {
     return res.status(200).json(await stats());
   } catch (err) { res.status(500).json({ error: err.message }); }
@@ -39,7 +43,7 @@ categoriasRutas.get("/:id", async (req, res) => {
 });
 
 // PUT actualizar
-categoriasRutas.put("/:id", async (req, res) => {
+categoriasRutas.put("/:id",soloAdmin, async (req, res) => {
   try {
     const c = await Categoria.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(c);
@@ -47,7 +51,7 @@ categoriasRutas.put("/:id", async (req, res) => {
 });
 
 // DELETE categoria
-categoriasRutas.delete("/:id", async (req, res) => {
+categoriasRutas.delete("/:id",soloAdmin, async (req, res) => {
   try {
     // opcional: desasignar categoria en productos
     await Producto.updateMany({ categoria_id: req.params.id }, { $unset: { categoria_id: "" } });

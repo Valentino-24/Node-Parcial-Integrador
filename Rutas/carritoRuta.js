@@ -3,9 +3,11 @@ import express from "express";
 import Carrito from "../Modelos/Carrito.js";
 import Producto from "../Modelos/Producto.js";
 import { agregarActualizarItem, eliminarCarrito, eliminarItem, total } from "../Controllers/carritoController.js";
+import { verificarToken } from "../middleware/verificarToken.js";
+
 
 const carritoRuta = express.Router();
-
+carritoRuta.use(verificarToken);
 // CREATE/UPsert carrito (opcional)
 carritoRuta.post("/", async (req, res) => {
   try {
