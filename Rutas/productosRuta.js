@@ -1,7 +1,7 @@
 import express from "express";
 import Producto from "../Modelos/Producto.js";
 import Resena from "../Modelos/Resena.js";
-import { top } from "../Controllers/productosController.js";
+import { filtro, top } from "../Controllers/productosController.js";
 import { verificarToken } from "../middleware/verificarToken.js";
 import { soloAdmin } from "../middleware/verificarRol.js";
 
@@ -28,14 +28,7 @@ productosRuta.get("/", async (req, res) => {
 
 productosRuta.get("/filtro", async (req, res) => {
   try {
-    const { minPrice, maxPrice, marca } = req.query;
-    const filtro = {};
-    if (minPrice || maxPrice) filtro.precio = {};
-    if (minPrice) filtro.precio.$gte = Number(minPrice);
-    if (maxPrice) filtro.precio.$lte = Number(maxPrice);
-    if (marca) filtro.marca = marca;
-    const productos = await Producto.find(filtro).populate("categoria_id", "nombre");
-    res.json(productos);
+    return res.status(200).json(await filtro(req.query));
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
