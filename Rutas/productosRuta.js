@@ -1,4 +1,3 @@
-// Rutas/productos.js
 import express from "express";
 import Producto from "../Modelos/Producto.js";
 import Resena from "../Modelos/Resena.js";
@@ -11,7 +10,7 @@ const productosRuta = express.Router();
 
 productosRuta.use(verificarToken);
 
-// CREATE producto
+// Crear producto
 productosRuta.post("/", soloAdmin, async (req, res) => {
   try {
     const p = await Producto.create(req.body);
@@ -19,7 +18,7 @@ productosRuta.post("/", soloAdmin, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// READ all productos con su categoría
+// Obtener todos los productos con su categoria
 productosRuta.get("/", async (req, res) => {
   try {
     const productos = await Producto.find().populate("categoria_id", "nombre descripcion");
@@ -27,7 +26,6 @@ productosRuta.get("/", async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// query: minPrice, maxPrice, marca
 productosRuta.get("/filtro", async (req, res) => {
   try {
     const { minPrice, maxPrice, marca } = req.query;
@@ -41,14 +39,14 @@ productosRuta.get("/filtro", async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// GET /api/productos/top -> productos más reseñados (por cantidad de reseñas)
+// Obterner el top de productos mejor reseñados
 productosRuta.get("/top", async (req, res) => {
   try {
     return res.status(200).json(await top());
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// PATCH /api/productos/:id/stock -> actualizar stock
+// Actualizar stock de producto
 productosRuta.patch("/:id/stock",soloAdmin, async (req, res) => {
   try {
     const { stock } = req.body;
@@ -59,7 +57,7 @@ productosRuta.patch("/:id/stock",soloAdmin, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// UPDATE producto completo
+// Actualizar producto completo
 productosRuta.put("/:id",soloAdmin, async (req, res) => {
   try {
     const p = await Producto.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -68,7 +66,7 @@ productosRuta.put("/:id",soloAdmin, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// DELETE producto
+// Borrar producto
 productosRuta.delete("/:id",soloAdmin, async (req, res) => {
   try {
     await Producto.findByIdAndDelete(req.params.id);
