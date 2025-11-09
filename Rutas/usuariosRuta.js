@@ -36,7 +36,7 @@ usuarioRutas.post("/", async (req, res) => {
     // Generar token JWT
     const token = jwt.sign(
       { id: user._id, email: user.email, rol: user.rol },
-      JWT_SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
@@ -71,7 +71,7 @@ usuarioRutas.post("/login", async (req, res) => {
     // 🔹 Crear token
     const token = jwt.sign(
       { id: user._id, email: user.email, rol: user.rol },
-      JWT_SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 

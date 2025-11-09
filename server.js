@@ -28,6 +28,7 @@ app.get("/", (req, res) => {
 app.get("/test", async (req, res) => {
   const count = await Usuario.countDocuments();
   res.json({ usuarios_en_bd: count });
+  console.log("JWT_SECRET:", process.env.JWT_SECRET);
 });
 
 
