@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import Usuario from "../Modelos/Usuario.js";
 import Carrito from "../Modelos/Carrito.js";
 import { verificarToken } from "../middleware/verificarToken.js";
-
+import { soloAdmin } from "../middleware/verificarRol.js";
 const usuarioRutas = express.Router();
 
 
@@ -88,7 +88,7 @@ usuarioRutas.post("/login", async (req, res) => {
 usuarioRutas.use(verificarToken);
 
 // Listar todos los usarios sin mostrar contraseña
-usuarioRutas.get("/", async (req, res) => {
+usuarioRutas.get("/",soloAdmin, async (req, res) => {
   try {
     const usuarios = await Usuario.find().select("-password");
     res.json(usuarios);
