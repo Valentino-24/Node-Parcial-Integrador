@@ -1,8 +1,8 @@
-// Controllers/resenasController.js
 import Resena from "../Modelos/Resena.js";
 import Pedido from "../Modelos/Pedido.js";
 import Producto from "../Modelos/Producto.js";
 
+// Crear nueva reseña
 export const crear = async (req, res) => {
   try {
     const { usuario_id, producto_id, calificacion, comentario } = req.body;
@@ -21,7 +21,7 @@ export const crear = async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
-
+// Listar top reseñas por calificacion
 export const top = async (req, res) => {
   try {
     const agg = await Resena.aggregate([
