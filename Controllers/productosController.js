@@ -2,6 +2,7 @@ import Producto from "../Modelos/Producto.js";
 import Resena from "../Modelos/Resena.js";
 import mongoose from "mongoose";
 
+//Crear producto
 export const crear = async (req, res) => {
   try {
     const p = await Producto.create(req.body);
@@ -9,6 +10,7 @@ export const crear = async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
+//Listar todos los productos de la bd
 export const listar = async (req, res) => {
   try {
     const productos = await Producto.find().populate("categoria_id", "nombre descripcion");
@@ -16,6 +18,7 @@ export const listar = async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
+//Filtrar productos por precio y marca
 export const filtro = async (req, res) => {
   try {
     const { minPrice, maxPrice, marca } = req.query;
@@ -29,6 +32,7 @@ export const filtro = async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
+// Listar los 10 productos con más reseñas
 export const top = async (req, res) => {
   try {
     const agg = await Resena.aggregate([
