@@ -1,6 +1,4 @@
-
 import Pedido from "../Modelos/Pedido.js";
-
 
 export const stats = async (req, res) => {
   try {
