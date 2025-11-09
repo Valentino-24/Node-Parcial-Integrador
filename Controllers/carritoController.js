@@ -1,6 +1,7 @@
 import Carrito from "../Modelos/Carrito.js";
 import Producto from "../Modelos/Producto.js";
 
+// Agregar o actualizar producto del carrito
 export const agregarActualizarItem = async (req, res) => {
   try {
     const { producto_id, cantidad = 1 } = req.body;
@@ -18,6 +19,7 @@ export const agregarActualizarItem = async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
+// Eliminar producto del carrito
 export const eliminarItem = async (req, res) => {
   try {
     const carrito = await Carrito.findOneAndUpdate(
@@ -29,6 +31,7 @@ export const eliminarItem = async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
+// Eliminar carrito completo
 export const eliminarCarrito = async (req, res) => {
   try {
     await Carrito.findOneAndDelete({ usuario_id: req.params.usuarioId });
@@ -36,6 +39,7 @@ export const eliminarCarrito = async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
+// Calcular total del carrito
 export const total = async (req, res) => {
   try {
     const carrito = await Carrito.findOne({ usuario_id: req.params.usuarioId }).populate("items.producto_id");
