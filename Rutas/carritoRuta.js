@@ -1,4 +1,3 @@
-// Rutas/carrito.js
 import express from "express";
 import Carrito from "../Modelos/Carrito.js";
 import Producto from "../Modelos/Producto.js";
@@ -8,7 +7,7 @@ import { verificarToken } from "../middleware/verificarToken.js";
 
 const carritoRuta = express.Router();
 carritoRuta.use(verificarToken);
-// CREATE/UPsert carrito (opcional)
+// Create de Carrito
 carritoRuta.post("/", async (req, res) => {
   try {
     const { usuario_id, items = [] } = req.body;
@@ -22,7 +21,7 @@ carritoRuta.post("/", async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// GET /api/carrito/:usuarioId -> mostrar carrito con productos
+// Get de Carrito con todos los productos
 carritoRuta.get("/:usuarioId", async (req, res) => {
   try {
     const carrito = await Carrito.findOne({ usuario_id: req.params.usuarioId }).populate("items.producto_id");
@@ -31,28 +30,28 @@ carritoRuta.get("/:usuarioId", async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// PUT agregar/actualizar item en carrito
+// Actualizar productos del carrito
 carritoRuta.put("/:usuarioId/item", async (req, res) => {
   try {
     return res.status(200).json(await agregarActualizarItem());
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// DELETE item del carrito
+// Borrar producto del carrito
 carritoRuta.delete("/:usuarioId/item/:productoId", async (req, res) => {
   try {
     return res.status(200).json(await eliminarItem());
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// DELETE /api/carrito/:usuarioId -> borrar todo el carrito
+// Borrar carrito por completo
 carritoRuta.delete("/:usuarioId", async (req, res) => {
   try {
     return res.status(200).json(await eliminarCarrito());
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// GET /api/carrito/:usuarioId/total -> calcular total y subtotal del carrito
+// Obtener total y subtotal del carrito
 carritoRuta.get("/:usuarioId/total", async (req, res) => {
   try {
     const carrito = await Carrito.findOne({ usuario_id: req.params.usuarioId }).populate("items.producto_id");
