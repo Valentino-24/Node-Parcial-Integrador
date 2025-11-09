@@ -1,4 +1,3 @@
-// Rutas/categorias.js
 import express from "express";
 import Categoria from "../Modelos/Categoria.js";
 import Producto from "../Modelos/Producto.js";
@@ -10,7 +9,7 @@ const categoriasRutas = express.Router();
 
 categoriasRutas.use(verificarToken);
 
-// CREATE categoria
+// Crear categoria
 categoriasRutas.post("/", soloAdmin, async (req, res) => {
   try {
     const c = await Categoria.create(req.body);
@@ -18,7 +17,7 @@ categoriasRutas.post("/", soloAdmin, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// READ todas las categorias
+// Obtener todas las categorias
 categoriasRutas.get("/", async (req, res) => {
   try {
     const cats = await Categoria.find();
@@ -26,14 +25,14 @@ categoriasRutas.get("/", async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// GET /api/categorias/stats -> cantidad de productos por categoría
+// Obtener cantidad de productos por cada categoria
 categoriasRutas.get("/stats",soloAdmin, async (req, res) => {
   try {
     return res.status(200).json(await stats());
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// GET categoria por id
+// Obtener categoria por ID
 categoriasRutas.get("/:id", async (req, res) => {
   try {
     const c = await Categoria.findById(req.params.id);
@@ -42,7 +41,7 @@ categoriasRutas.get("/:id", async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// PUT actualizar
+// Actualizar categoria por ID
 categoriasRutas.put("/:id",soloAdmin, async (req, res) => {
   try {
     const c = await Categoria.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -50,7 +49,7 @@ categoriasRutas.put("/:id",soloAdmin, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// DELETE categoria
+// Borrar categoria por ID
 categoriasRutas.delete("/:id",soloAdmin, async (req, res) => {
   try {
     // opcional: desasignar categoria en productos
