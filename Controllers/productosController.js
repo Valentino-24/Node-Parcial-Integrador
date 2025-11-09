@@ -1,4 +1,3 @@
-// Controllers/productosController.js
 import Producto from "../Modelos/Producto.js";
 import Resena from "../Modelos/Resena.js";
 import mongoose from "mongoose";
