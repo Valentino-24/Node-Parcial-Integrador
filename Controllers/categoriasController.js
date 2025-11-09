@@ -1,4 +1,3 @@
-// Controllers/categoriasController.js
 import Categoria from "../Modelos/Categoria.js";
 import Producto from "../Modelos/Producto.js";
 
