@@ -1,4 +1,3 @@
-// Rutas/ordenes.js
 import express from "express";
 import Pedido from "../Modelos/Pedido.js";
 import { stats } from "../Controllers/pedidosController.js";
@@ -8,16 +7,16 @@ import { soloAdmin } from "../middleware/verificarRol.js";
 const pedidosRutas = express.Router();
 pedidosRutas.use(verificarToken);
 
-// CREATE pedido
+// Crear pedido
 pedidosRutas.post("/", async (req, res) => {
   try {
-    const data = req.body; // esperar: usuario_id, items:[{producto_id,cantidad,subtotal}], total, estado
+    const data = req.body;
     const pedido = await Pedido.create(data);
     res.status(201).json(pedido);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// GET /api/ordenes -> listar pedidos con datos de usuario (populate usuario_id)
+// Obtener pedidos con datos del usuario
 pedidosRutas.get("/", async (req, res) => {
   try {
     const pedidos = await Pedido.find().populate("usuario_id", "nombre email").sort({ createdAt: -1 });
@@ -25,14 +24,14 @@ pedidosRutas.get("/", async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// GET /api/ordenes/stats -> total de pedidos por estado
+// Obtener pedidos por estado
 pedidosRutas.get("/stats", async (req, res) => {
   try {
     return res.status(200).json(await stats());
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// GET /api/ordenes/user/:userId -> pedidos de un usuario
+// Obtener pedidos por usuarioId
 pedidosRutas.get("/user/:userId", async (req, res) => {
   try {
     const pedidos = await Pedido.find({ usuario_id: req.params.userId }).populate("items.producto_id");
@@ -40,7 +39,7 @@ pedidosRutas.get("/user/:userId", async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// PATCH /api/ordenes/:id/status -> actualizar estado
+// Actualizar estado de un pedido
 pedidosRutas.patch("/:id/status", async (req, res) => {
   try {
     const { estado } = req.body;
@@ -51,7 +50,7 @@ pedidosRutas.patch("/:id/status", async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// GET /api/ordenes/:id -> detalle de pedido
+// Obtener detalles de un pedido
 pedidosRutas.get("/:id", async (req, res) => {
   try {
     const pedido = await Pedido.findById(req.params.id).populate("usuario_id", "nombre email").populate("items.producto_id");
@@ -60,7 +59,7 @@ pedidosRutas.get("/:id", async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// DELETE pedido
+// Borrar pedido
 pedidosRutas.delete("/:id", soloAdmin, async (req, res) => {
   try {
     await Pedido.findByIdAndDelete(req.params.id);
