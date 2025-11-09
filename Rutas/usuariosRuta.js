@@ -1,4 +1,3 @@
-// Rutas/usuarios.js
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -9,7 +8,7 @@ import { verificarToken } from "../middleware/verificarToken.js";
 const usuarioRutas = express.Router();
 
 
-// POST /api/usuarios -> registrar usuario
+// Registrar usuario
 usuarioRutas.post("/", async (req, res) => {
   try {
     const { nombre, email, password, direccion, telefono, rol } = req.body;
@@ -21,10 +20,10 @@ usuarioRutas.post("/", async (req, res) => {
     if (existe) 
       return res.status(400).json({ error: "Email ya registrado" });
 
-    // 🔹 Encriptar contraseña
+    // Encriptar contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 🔹 Crear usuario con contraseña encriptada
+    // Crear usuario con contraseña encriptada
     const user = await Usuario.create({
       nombre,
       email,
@@ -34,7 +33,7 @@ usuarioRutas.post("/", async (req, res) => {
       rol
     });
 
-    // 🔹 Generar token JWT
+    // Generar token JWT
     const token = jwt.sign(
       { id: user._id, email: user.email, rol: user.rol },
       JWT_SECRET,
@@ -88,7 +87,7 @@ usuarioRutas.post("/login", async (req, res) => {
 
 usuarioRutas.use(verificarToken);
 
-// GET /api/usuarios -> listar todos los usuarios (sin password)
+// Listar todos los usarios sin mostrar contraseña
 usuarioRutas.get("/", async (req, res) => {
   try {
     const usuarios = await Usuario.find().select("-password");
@@ -96,7 +95,7 @@ usuarioRutas.get("/", async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// GET /api/usuarios/:id -> detalle de un usuario
+// Obtener detalle de un usuario
 usuarioRutas.get("/:id", async (req, res) => {
   try {
     const usuario = await Usuario.findById(req.params.id).select("-password");
