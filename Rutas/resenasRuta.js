@@ -9,8 +9,11 @@ resenasRutas.use(verificarToken);
 // Crear reseña solo si el usuario compro el producto
 resenasRutas.post("/", async (req, res) => {
   try {
-    return res.status(200).json(await crear());
-  } catch (err) { res.status(500).json({ error: err.message }); }
+    const nuevaResena = await crear(req.body);
+    res.status(201).json(nuevaResena);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
 // Obtener todas las reseñas
@@ -32,8 +35,11 @@ resenasRutas.get("/product/:productId", async (req, res) => {
 // Obtener el promedio de calificaiones por producto
 resenasRutas.get("/top", async (req, res) => {
   try {
-    return res.status(200).json(await top());
-  } catch (err) { res.status(500).json({ error: err.message }); }
+    const listaTop = await top();
+    res.json(listaTop);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Obtener el detale de una reseña por Id
