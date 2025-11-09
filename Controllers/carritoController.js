@@ -1,4 +1,3 @@
-// Controllers/carritoController.js
 import Carrito from "../Modelos/Carrito.js";
 import Producto from "../Modelos/Producto.js";
 
