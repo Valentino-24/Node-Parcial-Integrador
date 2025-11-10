@@ -31,11 +31,11 @@ export const top = async () => {
     {
       $group: {
         _id: "$producto_id",
-        avgRating: { $avg: "$calificacion" },
-        count: { $sum: 1 }
+        PromedioCalificaciones: { $avg: "$calificacion" },
+        Resenias: { $sum: 1 }
       }
     },
-    { $sort: { avgRating: -1, count: -1 } },
+    { $sort: { PromedioCalificaciones: -1, Resenias: -1 } },
     {
       $lookup: {
         from: "productos",
@@ -49,8 +49,8 @@ export const top = async () => {
       $project: {
         productoId: "$producto._id",
         nombre: "$producto.nombre",
-        avgRating: 1,
-        count: 1
+        PromedioCalificaciones: 1,
+        Resenias: 1
       }
     },
     { $limit: 20 }
