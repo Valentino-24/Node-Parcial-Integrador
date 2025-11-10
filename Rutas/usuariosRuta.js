@@ -63,16 +63,16 @@ usuarioRutas.post("/login", async (req, res) => {
     if (!user)
       return res.status(404).json({ error: "Usuario no encontrado" });
 
-    // 🔹 Comparar contraseñas
+    // Comparar contraseñas
     const esValida = await bcrypt.compare(password, user.password);
     if (!esValida)
       return res.status(401).json({ error: "Contraseña incorrecta" });
 
-    // 🔹 Crear token
+    // Crear token
     const token = jwt.sign(
       { id: user._id, email: user.email, rol: user.rol },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "5h" }
     );
 
     res.json({
