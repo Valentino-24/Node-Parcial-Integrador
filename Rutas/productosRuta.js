@@ -1,6 +1,5 @@
 import express from "express";
 import Producto from "../Modelos/Producto.js";
-import Resena from "../Modelos/Resena.js";
 import { filtro, top } from "../Controllers/productosController.js";
 import { verificarToken } from "../middleware/verificarToken.js";
 import { soloAdmin } from "../middleware/verificarRol.js";
